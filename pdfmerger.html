@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF Online - UtilityNest</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- PDF-Lib CDN for client-side PDF merging -->
+    <script src="https://unpkg.com/pdf-lib@1.4.0/dist/pdf-lib.min.js"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-between">
+
+    <!-- Navbar -->
+    <header class="bg-slate-800 border-b border-slate-700 py-4 px-6 shadow-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
+                🛠️ UtilityNest
+            </a>
+            <span class="text-xs bg-blue-600 text-white px-3 py-1 rounded-full font-medium">PDF Tools</span>
+        </div>
+    </header>
+
+    <!-- Main Tool Container -->
+    <main class="max-w-3xl mx-auto w-full px-4 my-10 flex-grow">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 md:p-8 shadow-xl text-center">
+            <h2 class="text-2xl md:text-3xl font-extrabold text-white mb-2">Merge PDF Files Online</h2>
+            <p class="text-slate-400 text-sm mb-6">Select multiple PDF files and combine them into a single secure document instantly in your browser.</p>
+
+            <!-- Upload Area -->
+            <div class="mb-6 max-w-lg mx-auto text-left">
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Select PDF Files</label>
+                <input type="file" id="pdf-files" accept="application/pdf" multiple class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer">
+            </div>
+
+            <!-- Action Button -->
+            <div class="max-w-lg mx-auto mb-6">
+                <button onclick="mergePDFs()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl text-sm transition shadow-lg">
+                    Merge PDFs Now
+                </button>
+            </div>
+
+            <!-- Result Box -->
+            <div id="result-box" class="hidden bg-slate-900 border border-slate-700 p-6 rounded-xl max-w-lg mx-auto space-y-3">
+                <p class="text-xs font-semibold text-emerald-400">✅ PDFs successfully merged!</p>
+                <a id="download-btn" download="merged-document.pdf" class="inline-block bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-2.5 rounded-xl text-xs transition shadow-lg">
+                    Download Merged PDF
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 border-t border-slate-700 py-4 text-center text-xs text-slate-400">
+        <p>&copy; 2026 UtilityNest. All rights reserved.</p>
+    </footer>
+
+    <!-- PDF Merge Script -->
+    <script>
+        async function mergePDFs() {
+            const fileInput = document.getElementById('pdf-files');
+            if (fileInput.files.length < 2) {
+                alert("Please select at least 2 PDF files to merge.");
+                return;
+            }
+
+            try {
+                const mergedPdf = await PDFLib.PDFDocument.create();
+
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    const file = fileInput.files[i];
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+                    const copiedPages = await mergedPdf.copyPages(pdf, pdf.getgetPageIndices ? pdf.getPageIndices() : Array.from({length: pdf.getPageCount()}, (_, idx) => idx));
+                    copiedPages.forEach((page) => mergedPdf.addPage(page));
+                }
+
+                const mergedPdfFileBytes = await mergedPdf.save();
+                const blob = new Blob([mergedPdfFileBytes], { type: 'application/pdf' });
+                const blobUrl = URL.createObjectURL(blob);
+
+                const downloadBtn = document.getElementById('download-btn');
+                downloadBtn.href = blobUrl;
+                document.getElementById('result-box').classList.remove('hidden');
+
+            } catch (error) {
+                console.error(error);
+                alert("An error occurred while merging PDFs. Please check the files.");
+            }
+        }
+    </script>
+</body>
+</html>

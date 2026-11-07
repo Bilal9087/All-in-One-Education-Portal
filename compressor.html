@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Compressor & Resizer - UtilityNest</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-between">
+
+    <!-- Navbar -->
+    <header class="bg-slate-800 border-b border-slate-700 py-4 px-6 shadow-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
+                🛠️ UtilityNest
+            </a>
+            <span class="text-xs bg-blue-600 text-white px-3 py-1 rounded-full font-medium">Image Compressor</span>
+        </div>
+    </header>
+
+    <!-- Main Tool Container -->
+    <main class="max-w-3xl mx-auto w-full px-4 my-10 flex-grow">
+        
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 md:p-8 shadow-xl">
+            <h2 class="text-2xl md:text-3xl font-extrabold text-white mb-2 text-center">Online Image Compressor & Resizer</h2>
+            <p class="text-slate-400 text-center text-sm mb-8">Upload your JPG, PNG, or WebP image to reduce file size instantly without losing quality.</p>
+
+            <!-- Upload Area -->
+            <div class="mb-6">
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Select Image</label>
+                <input type="file" id="image-input" accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer">
+            </div>
+
+            <!-- Quality & Resize Controls -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Compression Quality (<span id="quality-val">80</span>%)</label>
+                    <input type="range" id="quality-input" min="10" max="100" value="80" oninput="document.getElementById('quality-val').innerText = this.value" class="w-full accent-blue-500 cursor-pointer">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Max Width / Height (px)</label>
+                    <input type="number" id="scale-input" value="1200" placeholder="e.g. 1200" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500">
+                </div>
+            </div>
+
+            <!-- Action Button -->
+            <button onclick="compressImage()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl text-sm transition shadow-lg mb-6">
+                Compress & Resize Image
+            </button>
+
+            <!-- Result Section -->
+            <div id="result-section" class="hidden bg-slate-900 border border-slate-700 p-6 rounded-xl text-center space-y-4">
+                <h3 class="font-bold text-sm text-white">Compression Successful!</h3>
+                <div class="flex justify-center gap-4 text-xs text-slate-400">
+                    <p>Original Size: <span id="original-size" class="text-white font-medium">0 KB</span></p>
+                    <p>Compressed Size: <span id="compressed-size" class="text-emerald-400 font-medium">0 KB</span></p>
+                </div>
+                <div>
+                    <a id="download-btn" download="compressed-image.jpg" class="inline-block bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-2.5 rounded-xl text-xs transition shadow-lg">
+                        Download Compressed Image
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 border-t border-slate-700 py-4 text-center text-xs text-slate-400">
+        <p>&copy; 2026 UtilityNest. All rights reserved.</p>
+    </footer>
+
+    <!-- Image Processing JavaScript Logic -->
+    <script>
+        function compressImage() {
+            const fileInput = document.getElementById('image-input');
+            const qualityInput = document.getElementById('quality-input').value / 100;
+            const scaleInput = parseInt(document.getElementById('scale-input').value) || 1200;
+
+            if (fileInput.files.length === 0) {
+                alert("Please select an image file first!");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            document.getElementById('original-size').innerText = (file.size / 1024).toFixed(2) + ' KB';
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function (event) {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = function () {
+                    let width = img.width;
+                    let height = img.height;
+
+                    // Resize logic maintaining aspect ratio
+                    if (width > height) {
+                        if (width > scaleInput) {
+                            height = Math.round((height * scaleInput) / width);
+                            width = scaleInput;
+                        }
+                    } else {
+                        if (height > scaleInput) {
+                            width = Math.round((width * scaleInput) / height);
+                            height = scaleInput;
+                        }
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Convert canvas to compressed JPEG data URL
+                    const dataUrl = canvas.toDataURL('image/jpeg', qualityInput);
+                    
+                    // Calculate compressed size approximately from base64 string
+                    const base64Length = dataUrl.length - (dataUrl.indexOf(',') + 1);
+                    const compressedSizeKB = (base64Length * 0.75) / 1024;
+
+                    document.getElementById('compressed-size').innerText = compressedSizeKB.toFixed(2) + ' KB';
+
+                    // Set download link
+                    const downloadBtn = document.getElementById('download-btn');
+                    downloadBtn.href = dataUrl;
+
+                    // Show result box
+                    document.getElementById('result-section').classList.remove('hidden');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

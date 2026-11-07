@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word & Character Counter - UtilityNest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-between">
+
+    <!-- Navbar -->
+    <header class="bg-slate-800 border-b border-slate-700 py-4 px-6 shadow-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
+                🛠️ UtilityNest
+            </a>
+            <span class="text-xs bg-blue-600 text-white px-3 py-1 rounded-full font-medium">Text Tools</span>
+        </div>
+    </header>
+
+    <!-- Main Tool Container -->
+    <main class="max-w-3xl mx-auto w-full px-4 my-10 flex-grow">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 md:p-8 shadow-xl">
+            <h2 class="text-2xl md:text-3xl font-extrabold text-white mb-2 text-center">Word & Character Counter</h2>
+            <p class="text-slate-400 text-center text-sm mb-6">Type or paste your text below to count words, characters, sentences, and reading time instantly.</p>
+
+            <!-- Metrics Summary Bar -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-center">
+                <div class="bg-slate-900 border border-slate-700 p-4 rounded-xl">
+                    <span class="text-xs text-slate-400 block uppercase font-semibold">Words</span>
+                    <span id="word-count" class="text-2xl font-bold text-blue-400">0</span>
+                </div>
+                <div class="bg-slate-900 border border-slate-700 p-4 rounded-xl">
+                    <span class="text-xs text-slate-400 block uppercase font-semibold">Characters</span>
+                    <span id="char-count" class="text-2xl font-bold text-blue-400">0</span>
+                </div>
+                <div class="bg-slate-900 border border-slate-700 p-4 rounded-xl">
+                    <span class="text-xs text-slate-400 block uppercase font-semibold">Sentences</span>
+                    <span id="sentence-count" class="text-2xl font-bold text-blue-400">0</span>
+                </div>
+                <div class="bg-slate-900 border border-slate-700 p-4 rounded-xl">
+                    <span class="text-xs text-slate-400 block uppercase font-semibold">Reading Time</span>
+                    <span id="read-time" class="text-2xl font-bold text-blue-400">0s</span>
+                </div>
+            </div>
+
+            <!-- Textarea -->
+            <textarea id="text-input" rows="8" oninput="countText()" placeholder="Type or paste your text here..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 text-sm text-slate-200 focus:outline-none focus:border-blue-500 shadow-inner mb-4"></textarea>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap gap-3">
+                <button onclick="convertToUppercase()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-4 py-2 rounded-xl text-xs font-semibold transition border border-slate-600">UPPERCASE</button>
+                <button onclick="convertToLowercase()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-4 py-2 rounded-xl text-xs font-semibold transition border border-slate-600">lowercase</button>
+                <button onclick="clearText()" class="bg-red-600/20 hover:bg-red-600/30 text-red-400 px-4 py-2 rounded-xl text-xs font-semibold transition border border-red-500/30 ml-auto">Clear Text</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 border-t border-slate-700 py-4 text-center text-xs text-slate-400">
+        <p>&copy; 2026 UtilityNest. All rights reserved.</p>
+    </footer>
+
+    <!-- Script -->
+    <script>
+        function countText() {
+            const text = document.getElementById('text-input').value;
+            
+            // Characters
+            document.getElementById('char-count').innerText = text.length;
+
+            // Words
+            const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+            document.getElementById('word-count').innerText = words;
+
+            // Sentences
+            const sentences = text.trim() === '' ? 0 : text.split(/[.!?]+/).filter(Boolean).length;
+            document.getElementById('sentence-count').innerText = sentences;
+
+            // Reading time (approx 200 words per minute)
+            const seconds = Math.ceil((words / 200) * 60);
+            document.getElementById('read-time').innerText = seconds + 's';
+        }
+
+        function convertToUppercase() {
+            const textarea = document.getElementById('text-input');
+            textarea.value = textarea.value.toUpperCase();
+            countText();
+        }
+
+        function convertToLowercase() {
+            const textarea = document.getElementById('text-input');
+            textarea.value = textarea.value.toLowerCase();
+            countText();
+        }
+
+        function clearText() {
+            document.getElementById('text-input').value = '';
+            countText();
+        }
+    </script>
+</body>
+</html>

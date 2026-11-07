@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Formatter & Validator - UtilityNest</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-between">
+
+    <!-- Navbar -->
+    <header class="bg-slate-800 border-b border-slate-700 py-4 px-6 shadow-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
+                🛠️ UtilityNest
+            </a>
+            <span class="text-xs bg-blue-600 text-white px-3 py-1 rounded-full font-medium">Developer Tools</span>
+        </div>
+    </header>
+
+    <!-- Main Tool Container -->
+    <main class="max-w-3xl mx-auto w-full px-4 my-10 flex-grow">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 md:p-8 shadow-xl">
+            <h2 class="text-2xl md:text-3xl font-extrabold text-white mb-2 text-center">JSON Formatter & Validator</h2>
+            <p class="text-slate-400 text-center text-sm mb-6">Paste your raw JSON code below to format, beautify, and validate it instantly.</p>
+
+            <!-- Textarea -->
+            <div class="mb-4">
+                <textarea id="json-input" rows="8" placeholder='Paste JSON here (e.g., {"name": "Bilal", "role": "Developer"})' class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 text-sm font-mono text-slate-200 focus:outline-none focus:border-blue-500 shadow-inner"></textarea>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap gap-3 mb-6">
+                <button onclick="formatJSON()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl text-xs font-semibold transition shadow-lg">Format / Beautify</button>
+                <button onclick="minifyJSON()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-5 py-2.5 rounded-xl text-xs font-semibold transition border border-slate-600">Minify</button>
+                <button onclick="clearJSON()" class="bg-red-600/20 hover:bg-red-600/30 text-red-400 px-4 py-2.5 rounded-xl text-xs font-semibold transition border border-red-500/30 ml-auto">Clear</button>
+            </div>
+
+            <!-- Status / Error Feedback -->
+            <div id="json-status" class="text-xs font-semibold mb-4 text-center"></div>
+
+            <!-- Output Display -->
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Output Result</label>
+                <pre id="json-output" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 text-xs font-mono text-emerald-400 overflow-x-auto min-h-[120px] max-h-[250px] shadow-inner"></pre>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 border-t border-slate-700 py-4 text-center text-xs text-slate-400">
+        <p>&copy; 2026 UtilityNest. All rights reserved.</p>
+    </footer>
+
+    <!-- JSON Script -->
+    <script>
+        function formatJSON() {
+            const raw = document.getElementById('json-input').value;
+            const statusEl = document.getElementById('json-status');
+            const outputEl = document.getElementById('json-output');
+
+            if (!raw.trim()) {
+                statusEl.innerText = "⚠️ Please enter some JSON text.";
+                statusEl.className = "text-xs font-semibold mb-4 text-center text-amber-400";
+                return;
+            }
+
+            try {
+                const parsed = JSON.parse(raw);
+                outputEl.innerText = JSON.stringify(parsed, null, 4);
+                statusEl.innerText = "✅ Valid JSON format!";
+                statusEl.className = "text-xs font-semibold mb-4 text-center text-emerald-400";
+            } catch (error) {
+                outputEl.innerText = "";
+                statusEl.innerText = "❌ Invalid JSON: " + error.message;
+                statusEl.className = "text-xs font-semibold mb-4 text-center text-red-400";
+            }
+        }
+
+        function minifyJSON() {
+            const raw = document.getElementById('json-input').value;
+            const statusEl = document.getElementById('json-status');
+            const outputEl = document.getElementById('json-output');
+
+            if (!raw.trim()) return;
+
+            try {
+                const parsed = JSON.parse(raw);
+                outputEl.innerText = JSON.stringify(parsed);
+                statusEl.innerText = "✅ Minified successfully!";
+                statusEl.className = "text-xs font-semibold mb-4 text-center text-emerald-400";
+            } catch (error) {
+                outputEl.innerText = "";
+                statusEl.innerText = "❌ Invalid JSON: " + error.message;
+                statusEl.className = "text-xs font-semibold mb-4 text-center text-red-400";
+            }
+        }
+
+        function clearJSON() {
+            document.getElementById('json-input').value = '';
+            document.getElementById('json-output').innerText = '';
+            document.getElementById('json-status').innerText = '';
+        }
+    </script>
+</body>
+</html>
