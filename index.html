@@ -8,6 +8,9 @@
     <!-- Monetag Verification Meta Tag -->
     <meta name="monetag" content="5f9715a8d39b5a19be73360dd9ae0d3e">
 
+    <!-- Google AdSense Publisher Script -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8606805655071754" crossorigin="anonymous"></script>
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -30,18 +33,21 @@
         </div>
     </header>
 
-    <!-- Adsterra Direct Banner Injection -->
-    <div style="text-align: center; margin: 20px 0; width: 100%;">
-        <script type="text/javascript">
-            atOptions = {
-                'key' : '2b412bb7117b1a3ff844bff073994dc0',
-                'format' : 'iframe',
-                'height' : 60,
-                'width' : 468,
-                'params' : {}
-            };
-        </script>
-        <script type="text/javascript" src="https://bauval.org/22/2b412bb7117b1a3ff844bff073994dc0"></script>
+    <!-- Google AdSense Display Ad Container -->
+    <div class="w-full my-6 flex flex-col items-center justify-center px-4">
+        <span class="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Advertisement</span>
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-2 w-full max-w-[728px] min-h-[90px] flex items-center justify-center shadow-inner overflow-hidden">
+            <!-- آپ اپنے ایڈسنس ڈیش بورڈ سے مخصوص 'Ad Unit' (Display Ad) کا کوڈ جنریٹ کر کے یہاں نیچے پیسٹ کر سکتے ہیں -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-8606805655071754"
+                 data-ad-slot="AUTO_AD_SLOT_ID"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
     </div>
 
     <!-- Main Content Container -->
